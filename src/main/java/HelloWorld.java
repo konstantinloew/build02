@@ -1,7 +1,10 @@
 public class HelloWorld {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
-        System.out.println("Hallo Welt!");
-        System.out.println("ハロー・ワールド");
+      HelloWorldHelper helper = new HelloWorldHelper ();
+      
+      System.out.println(helper.useEnglish());
+      System.out.println(helper.useGerman());
+      System.out.println(helper.useJapanese());
+      System.out.println(helper.useSpanish());
     }
 }
