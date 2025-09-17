@@ -23,10 +23,22 @@ pipeline {
                 sh ' mvn clean verify sonar:sonar   -Dsonar.projectKey=HelloWorldTest   -Dsonar.projectName=”HelloWorldTest”   -Dsonar.host.url=http://localhost:9000   -Dsonar.token=sqp_843a2c9abadfba5dda5e0c36100a867e0246c976'
             }
         }
-        stage('Deliver') {
+        stage('Deploy to Nexus') {
             steps {
-                echo 'This is the delivery stage'
-                sh 'cp /var/lib/jenkins/workspace/CICDPipeline/target/HelloWorld-0.0.1.jar /home/student/deploy01'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'nexus-credentials',
+                        usernameVariable: 'NEXUS_USER',
+                        passwordVariable: 'NEXUS_PASS'
+                    )
+                ])
+                {
+                    sh """
+                    curl -v -u $NEXUS_USER:$NEXUS_PASS \
+                    --upload-file /var/lib/jenkins/workspace/IntegrationTest/target/HelloWorld-0.0.1.jar \
+                    http://localhost:8081/repository/maven-releases3/com/example/HelloWorld/0.0.1/HelloWorld-0.0.1.jar
+                    """
+                }
             }
         }
     }
